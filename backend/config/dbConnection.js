@@ -1,29 +1,10 @@
-const mongoose = require('mongoose')
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_CONNECTION_URI,
+});
 
-const connectDevDB = async () => {
-    try {
-        await mongoose.connect(process.env.DATABASE_CONNECTION_URI, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true
-        })
-    } catch (error) {
-        console.log(error)
-    }
-}
+pool.on('connect', () => {
+  console.log('Conectado a la base de datos PostgreSQL');
+});
 
-const connectTestDB = async () => {
-    try {
-        await mongoose.connect(process.env.TEST_DATABASE_CONNECTION_URI, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true
-        })
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const disconnectTestDB = async () => {
-    await mongoose.connection.db.dropDatabase()
-}
-
-module.exports = { connectDevDB, connectTestDB, disconnectTestDB }
+module.exports = pool;
